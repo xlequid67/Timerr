@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta name="theme-color" content="#0e1218">
+
+    <title>Presko Timer</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: transparent;
+
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                sans-serif;
+        }
+
+        #watermark {
+            position: absolute;
+
+            top: 16px;
+            right: 16px;
+
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 8px 14px 8px 10px;
+
+            min-width: 220px;
+
+            background: rgba(14, 18, 24, 0.94);
+
+            color: #e8edf5;
+
+            border-radius: 8px;
+
+            border: 1px solid
+                rgba(255, 255, 255, 0.06);
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.30),
+                0 1px 2px rgba(0, 0, 0, 0.10);
+
+            z-index: 10003;
+        }
+
+        #avatar {
+            width: 30px;
+            height: 30px;
+
+            flex-shrink: 0;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #9eff6e,
+                    #6fc9ff
+                );
+
+            color: #0e1218;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            user-select: none;
+        }
+
+        #content {
+            display: flex;
+            flex-direction: column;
+
+            gap: 2px;
+
+            min-width: 0;
+            flex: 1;
+        }
+
+        .header {
+            display: flex;
+            align-items: baseline;
+
+            gap: 6px;
+
+            font-size: 13px;
+        }
+
+        .software {
+            color: #9eff6e;
+
+            font-weight: 600;
+
+            letter-spacing: 0.3px;
+        }
+
+        .player {
+            color: #e8edf5;
+
+            font-weight: 500;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            max-width: 110px;
+        }
+
+        .timer {
+            margin-left: auto;
+
+            color: #ffd700;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            font-variant-numeric:
+                tabular-nums;
+        }
+
+        .details-line {
+            font-size: 11px;
+
+            color: #b3ffa0;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+        }
+
+        .label {
+            color: #8a9bb5;
+        }
+
+        .value {
+            color: #e8edf5;
+        }
+
+        .sep {
+            color: #4a5a4e;
+
+            margin: 0 4px;
+        }
+
+        #logo {
+            position: absolute;
+
+            right: 16px;
+            bottom: 16px;
+
+            width: 64px;
+            height: 64px;
+
+            object-fit: cover;
+
+            border-radius: 12px;
+
+            border: 1px solid
+                rgba(255, 255, 255, 0.06);
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.30),
+                0 1px 2px rgba(0, 0, 0, 0.10);
+
+            z-index: 10003;
+
+            pointer-events: none;
+
+            user-select: none;
+        }
+
+        @media (max-width: 600px) {
+
+            #watermark {
+                top: 12px;
+                right: 12px;
+
+                min-width: 160px;
+
+                padding: 6px 10px;
+
+                gap: 6px;
+            }
+
+            #avatar {
+                width: 24px;
+                height: 24px;
+
+                font-size: 10px;
+            }
+
+            .header {
+                font-size: 11px;
+            }
+
+            .timer {
+                font-size: 10px;
+            }
+
+            .details-line {
+                font-size: 10px;
+            }
+
+            #logo {
+                right: 12px;
+                bottom: 12px;
+
+                width: 48px;
+                height: 48px;
+
+                border-radius: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="watermark">
+
+        <div id="avatar">?</div>
+
+        <div id="content">
+
+            <div class="header">
+
+                <span class="software">
+                    Presko Menu
+                </span>
+
+                <span
+                    class="player"
+                    id="wm-player"
+                >
+                    Unknown
+                </span>
+
+                <span
+                    class="timer"
+                    id="wm-timer"
+                >
+                    00:00:00
+                </span>
+
+            </div>
+
+            <div
+                class="details-line"
+                id="wm-details"
+            >
+                <span class="label">
+                    Membership
+                </span>
+
+                <span class="value">
+                    Lifetime
+                </span>
+
+                <span class="sep">|</span>
+
+                <span class="label">
+                    Version
+                </span>
+
+                <span class="value">
+                    V4
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <img
+        id="logo"
+        src="https://www.image2url.com/r2/default/images/1790674994406-c608b4ff-ca85-4c85-a7e9-4c2dae03a8e3.png"
+        alt="Presko"
+    >
+
+
+    <script>
+
+        (() => {
+
+            const player =
+                document.getElementById(
+                    "wm-player"
+                );
+
+            const timer =
+                document.getElementById(
+                    "wm-timer"
+                );
+
+            const avatar =
+                document.getElementById(
+                    "avatar"
+                );
+
+            const details =
+                document.getElementById(
+                    "wm-details"
+                );
+
+
+            let playerName =
+                "Unknown";
+
+            let sessionStart =
+                Date.now();
+
+
+            function initials(name) {
+
+                if (!name) {
+                    return "?";
+                }
+
+                const parts =
+                    name.trim().split(/\s+/);
+
+                if (parts.length === 1) {
+
+                    return parts[0]
+                        .charAt(0)
+                        .toUpperCase();
+                }
+
+                return (
+                    parts[0].charAt(0) +
+                    parts[parts.length - 1]
+                        .charAt(0)
+                ).toUpperCase();
+            }
+
+
+            function setPlayer(name) {
+
+                playerName =
+                    name || "Unknown";
+
+                player.textContent =
+                    playerName;
+
+                avatar.textContent =
+                    initials(playerName);
+            }
+
+
+            function formatTime(seconds) {
+
+                const h =
+                    Math.floor(seconds / 3600);
+
+                const m =
+                    Math.floor(
+                        (seconds % 3600) / 60
+                    );
+
+                const s =
+                    Math.floor(seconds % 60);
+
+                return (
+                    String(h).padStart(2, "0") +
+                    ":" +
+                    String(m).padStart(2, "0") +
+                    ":" +
+                    String(s).padStart(2, "0")
+                );
+            }
+
+
+            function updateTimer() {
+
+                const elapsed =
+                    Math.max(
+                        0,
+                        (Date.now() -
+                            sessionStart) / 1000
+                    );
+
+                timer.textContent =
+                    formatTime(elapsed);
+            }
+
+
+            function setDetails(
+                membership,
+                version
+            ) {
+
+                details.innerHTML = `
+                    <span class="label">
+                        Membership
+                    </span>
+
+                    <span class="value">
+                        ${membership || "Lifetime"}
+                    </span>
+
+                    <span class="sep">|</span>
+
+                    <span class="label">
+                        Version
+                    </span>
+
+                    <span class="value">
+                        ${version || "V4"}
+                    </span>
+                `;
+            }
+
+
+            /*
+             * LUA -> WATERMARK
+             */
+
+            window.addEventListener(
+                "message",
+                function(event) {
+
+                    const message =
+                        event.data;
+
+                    if (!message) {
+                        return;
+                    }
+
+                    if (
+                        message.action !==
+                        "userdetails"
+                    ) {
+                        return;
+                    }
+
+                    const data =
+                        message.data;
+
+                    if (!data) {
+                        return;
+                    }
+
+
+                    /*
+                     * Customer name
+                     */
+
+                    if (data.playerName) {
+
+                        setPlayer(
+                            data.playerName
+                        );
+                    }
+
+
+                    /*
+                     * Membership + Version
+                     */
+
+                    setDetails(
+                        data.Membership ||
+                            "Lifetime",
+
+                        data.version ||
+                            "V4"
+                    );
+
+
+                    /*
+                     * Session timer
+                     */
+
+                    if (
+                        typeof
+                        data.sessionStart ===
+                        "number"
+                    ) {
+
+                        sessionStart =
+                            data.sessionStart;
+                    }
+
+
+                    /*
+                     * Avatar
+                     */
+
+                    if (data.avatarUrl) {
+
+                        avatar.style.background =
+                            `url("${data.avatarUrl}")
+                             center/cover no-repeat`;
+
+                        avatar.textContent = "";
+
+                    } else {
+
+                        avatar.style.background =
+                            "linear-gradient(" +
+                            "135deg,#9eff6e,#6fc9ff)";
+
+                        avatar.textContent =
+                            initials(playerName);
+                    }
+
+
+                    updateTimer();
+                }
+            );
+
+
+            /*
+             * Default state
+             */
+
+            setPlayer("Unknown");
+
+            setDetails(
+                "Lifetime",
+                "V4"
+            );
+
+            updateTimer();
+
+
+            /*
+             * Timer
+             */
+
+            setInterval(
+                updateTimer,
+                1000
+            );
+
+        })();
+
+    </script>
+
+</body>
+
+</html>
