@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1"
+        content="width=device-width, initial-scale=1.0"
     >
 
     <meta name="theme-color" content="#0e1218">
@@ -14,18 +13,36 @@
     <title>Presko Timer</title>
 
     <style>
-        * {
+        /*
+         * =====================================================
+         * GLOBAL DISPLAY-ONLY MODE
+         * =====================================================
+         */
+
+        *,
+        *::before,
+        *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+
+            /*
+             * Prevent this DUI from becoming an input target.
+             */
+            pointer-events: none !important;
         }
 
         html,
         body {
             width: 100%;
             height: 100%;
+
+            margin: 0;
+            padding: 0;
+
             overflow: hidden;
-            background: transparent;
+
+            background: transparent !important;
 
             font-family:
                 Inter,
@@ -34,225 +51,309 @@
                 "Segoe UI",
                 Roboto,
                 sans-serif;
+
+            /*
+             * Display only.
+             */
+            pointer-events: none !important;
+
+            /*
+             * Prevent text selection.
+             */
+            user-select: none !important;
+
+            /*
+             * Prevent accidental touch/click behavior.
+             */
+            -webkit-user-select: none !important;
+            -webkit-touch-callout: none !important;
+
+            /*
+             * The document itself must never become
+             * an interaction surface.
+             */
+            cursor: default !important;
         }
 
+        body {
+            position: relative;
+        }
+
+        /*
+         * =====================================================
+         * WATERMARK
+         * =====================================================
+         */
+
         #watermark {
-    position: absolute;
+            position: fixed;
 
-    top: 16px;
-    right: 16px;
+            top: 16px;
+            right: 16px;
 
-    display: flex;
-    align-items: center;
+            display: flex;
+            align-items: center;
 
-    gap: 10px;
+            gap: 10px;
 
-    padding: 8px 14px 8px 10px;
+            padding: 8px 14px 8px 10px;
 
-    min-width: 220px;
+            min-width: 220px;
 
-    background: rgba(14, 18, 24, 0.94);
+            background: rgba(14, 18, 24, 0.94);
 
-    color: #e8edf5;
+            color: #e8edf5;
 
-    border-radius: 8px;
+            border-radius: 8px;
 
-    border: 1px solid
-        rgba(255, 255, 255, 0.06);
+            border: 1px solid
+                rgba(255, 255, 255, 0.06);
 
-    box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.30),
-        0 1px 2px rgba(0, 0, 0, 0.10);
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.30),
+                0 1px 2px rgba(0, 0, 0, 0.10);
 
-    z-index: 10003;
+            z-index: 10003;
 
-    /* IMPORTANT: watermark does not receive mouse input */
-    pointer-events: none;
+            /*
+             * Absolutely no mouse interaction.
+             */
+            pointer-events: none !important;
 
-    /* prevents text selection */
-    user-select: none;
-}
+            user-select: none !important;
+        }
 
-#avatar {
-    width: 30px;
-    height: 30px;
+        /*
+         * =====================================================
+         * AVATAR
+         * =====================================================
+         */
 
-    flex-shrink: 0;
+        #avatar {
+            width: 30px;
+            height: 30px;
 
-    border-radius: 50%;
+            flex-shrink: 0;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+            border-radius: 50%;
 
-    background:
-        linear-gradient(
-            135deg,
-            #9eff6e,
-            #6fc9ff
-        );
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-    color: #0e1218;
+            background:
+                linear-gradient(
+                    135deg,
+                    #9eff6e,
+                    #6fc9ff
+                );
 
-    font-size: 13px;
-    font-weight: 700;
+            color: #0e1218;
 
-    user-select: none;
-}
+            font-size: 13px;
+            font-weight: 700;
 
-#content {
-    display: flex;
-    flex-direction: column;
+            overflow: hidden;
 
-    gap: 2px;
+            pointer-events: none !important;
+            user-select: none !important;
+        }
 
-    min-width: 0;
-    flex: 1;
-}
+        /*
+         * =====================================================
+         * CONTENT
+         * =====================================================
+         */
 
-.header {
-    display: flex;
-    align-items: baseline;
+        #content {
+            display: flex;
+            flex-direction: column;
 
-    gap: 6px;
+            gap: 2px;
 
-    font-size: 13px;
-}
+            min-width: 0;
+            flex: 1;
 
-.software {
-    color: #9eff6e;
+            pointer-events: none !important;
+        }
 
-    font-weight: 600;
+        .header {
+            display: flex;
+            align-items: baseline;
 
-    letter-spacing: 0.3px;
-}
+            gap: 6px;
 
-.player {
-    color: #e8edf5;
+            font-size: 13px;
 
-    font-weight: 500;
+            pointer-events: none !important;
+        }
 
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+        .software {
+            color: #008CFF;
 
-    max-width: 110px;
-}
+            font-weight: 600;
 
-.timer {
-    margin-left: auto;
+            letter-spacing: 0.3px;
 
-    color: #008CFF;
+            pointer-events: none !important;
+        }
 
-    font-size: 12px;
+        .player {
+            color: #e8edf5;
 
-    font-weight: 600;
+            font-weight: 500;
 
-    font-variant-numeric:
-        tabular-nums;
-}
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
 
-.details-line {
-    font-size: 11px;
+            max-width: 110px;
 
-    color: #b3ffa0;
+            pointer-events: none !important;
+        }
 
-    white-space: nowrap;
+        .timer {
+            margin-left: auto;
 
-    overflow: hidden;
+            color: #008CFF;
 
-    text-overflow: ellipsis;
-}
+            font-size: 12px;
 
-.label {
-    color: #8a9bb5;
-}
+            font-weight: 600;
 
-.value {
-    color: #e8edf5;
-}
+            font-variant-numeric:
+                tabular-nums;
 
-.sep {
-    color: #4a5a4e;
+            pointer-events: none !important;
+        }
 
-    margin: 0 4px;
-}
+        .details-line {
+            font-size: 11px;
 
-#logo {
-    position: absolute;
+            color: #b3ffa0;
 
-    right: 16px;
-    bottom: 16px;
+            white-space: nowrap;
 
-    width: 64px;
-    height: 64px;
+            overflow: hidden;
 
-    object-fit: cover;
+            text-overflow: ellipsis;
 
-    border-radius: 12px;
+            pointer-events: none !important;
+        }
 
-    border: 1px solid
-        rgba(255, 255, 255, 0.06);
+        .label {
+            color: #8a9bb5;
 
-    box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.30),
-        0 1px 2px rgba(0, 0, 0, 0.10);
+            pointer-events: none !important;
+        }
 
-    z-index: 10003;
+        .value {
+            color: #e8edf5;
 
-    pointer-events: none;
+            pointer-events: none !important;
+        }
 
-    user-select: none;
-}
+        .sep {
+            color: #4a5a4e;
 
-@media (max-width: 600px) {
+            margin: 0 4px;
 
-    #watermark {
-        top: 12px;
-        right: 12px;
+            pointer-events: none !important;
+        }
 
-        min-width: 160px;
+        /*
+         * =====================================================
+         * LOGO
+         * =====================================================
+         */
 
-        padding: 6px 10px;
+        #logo {
+            position: fixed;
 
-        gap: 6px;
+            right: 16px;
+            bottom: 16px;
 
-        pointer-events: none;
-    }
+            width: 64px;
+            height: 64px;
 
-    #avatar {
-        width: 24px;
-        height: 24px;
+            object-fit: cover;
 
-        font-size: 10px;
-    }
+            border-radius: 12px;
 
-    .header {
-        font-size: 11px;
-    }
+            border: 1px solid
+                rgba(255, 255, 255, 0.06);
 
-    .timer {
-        font-size: 10px;
-    }
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.30),
+                0 1px 2px rgba(0, 0, 0, 0.10);
 
-    .details-line {
-        font-size: 10px;
-    }
+            z-index: 10003;
 
-    #logo {
-        right: 12px;
-        bottom: 12px;
+            pointer-events: none !important;
 
-        width: 48px;
-        height: 48px;
+            user-select: none !important;
 
-        border-radius: 10px;
-    }
-}
+            -webkit-user-drag: none;
+        }
+
+        /*
+         * =====================================================
+         * MOBILE
+         * =====================================================
+         */
+
+        @media (max-width: 600px) {
+
+            #watermark {
+                top: 12px;
+                right: 12px;
+
+                min-width: 160px;
+
+                padding: 6px 10px;
+
+                gap: 6px;
+
+                pointer-events: none !important;
+            }
+
+            #avatar {
+                width: 24px;
+                height: 24px;
+
+                font-size: 10px;
+            }
+
+            .header {
+                font-size: 11px;
+            }
+
+            .timer {
+                font-size: 10px;
+            }
+
+            .details-line {
+                font-size: 10px;
+            }
+
+            #logo {
+                right: 12px;
+                bottom: 12px;
+
+                width: 48px;
+                height: 48px;
+
+                border-radius: 10px;
+            }
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- =====================================================
+         WATERMARK
+         ===================================================== -->
 
     <div id="watermark">
 
@@ -262,7 +363,9 @@
 
             <div class="header">
 
-                <span style="color: #008CFF;">Presko Menu</span>
+                <span class="software">
+                    Presko Menu
+                </span>
 
                 <span
                     class="player"
@@ -271,12 +374,12 @@
                     Unknown
                 </span>
 
-                <span class="timer" id="wm-timer"> 00:00:00 </span>
-                <style>
-                    #wm-timer {
-                        color: #008CFF;
-                    }
-                </style>
+                <span
+                    class="timer"
+                    id="wm-timer"
+                >
+                    00:00:00
+                </span>
 
             </div>
 
@@ -307,45 +410,57 @@
 
     </div>
 
+    <!-- =====================================================
+         LOGO
+         ===================================================== -->
 
     <img
         id="logo"
         src="https://www.image2url.com/r2/default/images/1790674994406-c608b4ff-ca85-4c85-a7e9-4c2dae03a8e3.png"
-        alt="Presko"
+        alt=""
+        draggable="false"
     >
 
-
     <script>
-
         (() => {
 
+            "use strict";
+
+            /*
+             * =================================================
+             * ELEMENTS
+             * =================================================
+             */
+
             const player =
-                document.getElementById(
-                    "wm-player"
-                );
+                document.getElementById("wm-player");
 
             const timer =
-                document.getElementById(
-                    "wm-timer"
-                );
+                document.getElementById("wm-timer");
 
             const avatar =
-                document.getElementById(
-                    "avatar"
-                );
+                document.getElementById("avatar");
 
             const details =
-                document.getElementById(
-                    "wm-details"
-                );
+                document.getElementById("wm-details");
 
 
-            let playerName =
-                "Unknown";
+            /*
+             * =================================================
+             * STATE
+             * =================================================
+             */
 
-            let sessionStart =
-                Date.now();
+            let playerName = "Unknown";
 
+            let sessionStart = Date.now();
+
+
+            /*
+             * =================================================
+             * INITIALS
+             * =================================================
+             */
 
             function initials(name) {
 
@@ -354,7 +469,13 @@
                 }
 
                 const parts =
-                    name.trim().split(/\s+/);
+                    String(name)
+                        .trim()
+                        .split(/\s+/);
+
+                if (!parts.length) {
+                    return "?";
+                }
 
                 if (parts.length === 1) {
 
@@ -371,10 +492,16 @@
             }
 
 
+            /*
+             * =================================================
+             * PLAYER
+             * =================================================
+             */
+
             function setPlayer(name) {
 
                 playerName =
-                    name || "Unknown";
+                    String(name || "Unknown");
 
                 player.textContent =
                     playerName;
@@ -383,6 +510,12 @@
                     initials(playerName);
             }
 
+
+            /*
+             * =================================================
+             * TIMER FORMAT
+             * =================================================
+             */
 
             function formatTime(seconds) {
 
@@ -407,6 +540,12 @@
             }
 
 
+            /*
+             * =================================================
+             * TIMER UPDATE
+             * =================================================
+             */
+
             function updateTimer() {
 
                 const elapsed =
@@ -421,40 +560,100 @@
             }
 
 
+            /*
+             * =================================================
+             * DETAILS
+             *
+             * Uses textContent rather than innerHTML so
+             * Lua-provided values cannot inject HTML.
+             * =================================================
+             */
+
             function setDetails(
                 membership,
                 version
             ) {
 
-                details.innerHTML = `
-                    <span class="label">
-                        Membership
-                    </span>
+                details.textContent = "";
 
-                    <span class="value">
-                        ${membership || "Lifetime"}
-                    </span>
+                const membershipLabel =
+                    document.createElement("span");
 
-                    <span class="sep">|</span>
+                membershipLabel.className =
+                    "label";
 
-                    <span class="label">
-                        Version
-                    </span>
+                membershipLabel.textContent =
+                    "Membership";
 
-                    <span class="value">
-                        ${version || "V4"}
-                    </span>
-                `;
+                const membershipValue =
+                    document.createElement("span");
+
+                membershipValue.className =
+                    "value";
+
+                membershipValue.textContent =
+                    String(
+                        membership || "Lifetime"
+                    );
+
+                const separator =
+                    document.createElement("span");
+
+                separator.className =
+                    "sep";
+
+                separator.textContent =
+                    "|";
+
+                const versionLabel =
+                    document.createElement("span");
+
+                versionLabel.className =
+                    "label";
+
+                versionLabel.textContent =
+                    "Version";
+
+                const versionValue =
+                    document.createElement("span");
+
+                versionValue.className =
+                    "value";
+
+                versionValue.textContent =
+                    String(version || "V4");
+
+                details.appendChild(
+                    membershipLabel
+                );
+
+                details.appendChild(
+                    membershipValue
+                );
+
+                details.appendChild(
+                    separator
+                );
+
+                details.appendChild(
+                    versionLabel
+                );
+
+                details.appendChild(
+                    versionValue
+                );
             }
 
 
             /*
-             * LUA -> WATERMARK
+             * =================================================
+             * LUA -> DUI MESSAGE
+             * =================================================
              */
 
             window.addEventListener(
                 "message",
-                function(event) {
+                (event) => {
 
                     const message =
                         event.data;
@@ -479,19 +678,17 @@
 
 
                     /*
-                     * Customer name
+                     * Player
                      */
 
-                    if (data.playerName) {
-
-                        setPlayer(
-                            data.playerName
-                        );
-                    }
+                    setPlayer(
+                        data.playerName ||
+                        "Unknown"
+                    );
 
 
                     /*
-                     * Membership + Version
+                     * Membership / Version
                      */
 
                     setDetails(
@@ -508,8 +705,7 @@
                      */
 
                     if (
-                        typeof
-                        data.sessionStart ===
+                        typeof data.sessionStart ===
                         "number"
                     ) {
 
@@ -524,9 +720,15 @@
 
                     if (data.avatarUrl) {
 
+                        /*
+                         * Use CSS background image.
+                         * The element still cannot receive
+                         * pointer input.
+                         */
+
                         avatar.style.background =
-                            `url("${data.avatarUrl}")
-                             center/cover no-repeat`;
+                            `url("${String(data.avatarUrl)}")
+                             center / cover no-repeat`;
 
                         avatar.textContent = "";
 
@@ -534,12 +736,14 @@
 
                         avatar.style.background =
                             "linear-gradient(" +
-                            "135deg,#9eff6e,#6fc9ff)";
+                            "135deg," +
+                            "#9eff6e," +
+                            "#6fc9ff" +
+                            ")";
 
                         avatar.textContent =
                             initials(playerName);
                     }
-
 
                     updateTimer();
                 }
@@ -547,7 +751,9 @@
 
 
             /*
-             * Default state
+             * =================================================
+             * DEFAULT STATE
+             * =================================================
              */
 
             setPlayer("Unknown");
@@ -561,7 +767,9 @@
 
 
             /*
-             * Timer
+             * =================================================
+             * TIMER
+             * =================================================
              */
 
             setInterval(
@@ -570,9 +778,7 @@
             );
 
         })();
-
     </script>
 
 </body>
-
 </html>
